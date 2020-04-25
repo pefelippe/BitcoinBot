@@ -1,21 +1,28 @@
-var Twitter = require("twitter")
-var config = require("./config")
+const Twitter = require("twitter")
+const config = require("./config")
+const api = new Twitter(config)
 const axios = require("axios")
 
-var T = new Twitter(config)
+const delayMin = 1000 * 60; // minuto
+const delayMax = 1000 * 60 * 60 * 24 // dia
 
-// Gerar Tweet sobre a Cotação atual do BTC.
-axios.get(config.urlBTC)
-.then(e=> {
-  var tweet = {
-    status : "Valor do Bitcoin: R$ " + e.data.ticker.last
-  }
+// Função para gerar o tweet
+function gerarTweet()
+{
+  axios.get(config.urlBTC)
+  .then(e => {
+    console.log(e.data)
+    var tweet = {
+      status : `
+      COTAÇÃO BITCOIN
+      Valor atual : R$ ${e.data.ticker.last}
+      Valor Max do dia: R$ ${e.data.ticker.high}
+      Valor Min do dia: R$ ${e.data.ticker.low}`
+    }
 
-  T.post('statuses/update', tweet, tweeted)
-
-})
-
-// Callback
-function tweeted (err, data, response){
-  console.log(data)
+    api.post('statuses/update', tweet, data => console.log(data));
+  })
 }
+
+setInterval(gerarTweet, delayMin)
+
