@@ -22,8 +22,7 @@ function gerarTweet()
       Valor Min do dia: R$ ${e.data.ticker.low}`
     }
 
-    let res = api.post('statuses/update', tweet, data => console.log(data));
-    console.log(res)
+    api.post('statuses/update', tweet, data => console.log(data));
   })
 }
 gerarTweet()
